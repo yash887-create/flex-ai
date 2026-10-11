@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLEX AI - Cybernetic Assistant & Workspace</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Orbitron & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            bg: '#05070f',
+                            card: 'rgba(13, 19, 36, 0.75)',
+                            border: 'rgba(0, 240, 255, 0.25)',
+                            cyan: '#00f0ff',
+                            purple: '#a855f7',
+                            pink: '#ec4899',
+                            dark: '#030712'
+                        }
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #05070f;
+            background-image: 
+                radial-gradient(circle at 15% 20%, rgba(0, 240, 255, 0.1) 0%, transparent 45%),
+                radial-gradient(circle at 85% 80%, rgba(168, 85, 247, 0.1) 0%, transparent 45%),
+                linear-gradient(to bottom, rgba(5, 7, 15, 0.95), rgba(3, 5, 10, 0.99));
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .orbitron { font-family: 'Orbitron', sans-serif; }
+
+        .glass-panel {
+            background: rgba(13, 19, 36, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+        }
+
+        .glass-panel:hover {
+            border-color: rgba(0, 240, 255, 0.4);
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.2);
+        }
+
+        .glow-cyan {
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.45);
+        }
+
+        .glow-purple {
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.45);
+        }
+
+        /* Animated AI Glowing Orb Core */
+        .ai-orb-container {
+            position: relative;
+            width: 110px;
+            height: 110px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ai-orb {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #00f0ff 0%, #a855f7 65%, #030712 100%);
+            box-shadow: 0 0 35px #00f0ff, 0 0 60px #a855f7;
+            animation: pulseOrb 3s infinite ease-in-out;
+        }
+
+        .ai-ring {
+            position: absolute;
+            width: 95px;
+            height: 95px;
+            border: 2px dashed rgba(0, 240, 255, 0.6);
+            border-radius: 50%;
+            animation: rotateRing 12s linear infinite;
+        }
+
+        .ai-ring-2 {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            border: 1px solid rgba(168, 85, 247, 0.4);
+            border-top: 2px solid #ec4899;
+            border-radius: 50%;
+            animation: rotateRing 7s linear infinite reverse;
+        }
+
+        @keyframes pulseOrb {
+            0%, 100% { transform: scale(0.92); opacity: 0.85; }
+            50% { transform: scale(1.08); opacity: 1; filter: drop-shadow(0 0 25px #00f0ff); }
+        }
+
+        @keyframes rotateRing {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(5, 7, 15, 0.9); }
+        ::-webkit-scrollbar-thumb { background: rgba(0, 240, 255, 0.3); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(0, 240, 255, 0.6); }
+
+        .cyber-btn {
+            position: relative;
+            transition: all 0.25s ease;
+            overflow: hidden;
+        }
+        .cyber-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+            transition: 0.5s;
+        }
+        .cyber-btn:hover::before { left: 100%; }
+
+        /* Audio Voice Visualizer Waves */
+        .wave-bar {
+            width: 4px;
+            height: 16px;
+            background: #00f0ff;
+            border-radius: 2px;
+            animation: waveAnim 1.2s ease-in-out infinite alternate;
+        }
+        .wave-bar:nth-child(2) { animation-delay: 0.2s; background: #38bdf8; }
+        .wave-bar:nth-child(3) { animation-delay: 0.4s; background: #a855f7; }
+        .wave-bar:nth-child(4) { animation-delay: 0.6s; background: #ec4899; }
+        .wave-bar:nth-child(5) { animation-delay: 0.8s; background: #00f0ff; }
+
+        @keyframes waveAnim {
+            0% { height: 6px; }
+            100% { height: 30px; }
+        }
+
+        .speaking .wave-bar { animation-play-state: running; }
+        .paused .wave-bar { height: 6px !important; animation: none !important; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col md:flex-row text-slate-200 antialiased selection:bg-cyan-500 selection:text-black">
+
+    <aside class="w-full md:w-64 glass-panel flex-shrink-0 border-r border-cyber-border/40 p-4 flex flex-col justify-between z-20">
+        <div>
+            <!-- Brand Logo -->
+            <div class="flex items-center gap-3 px-2 py-3 mb-6 border-b border-cyan-500/20">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-purple-600 to-pink-500 flex items-center justify-center text-black font-black text-xl shadow-lg shadow-cyan-500/40">
+                    FX
+                </div>
+                <div>
+                    <h1 class="orbitron font-bold text-xl text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400 tracking-wider">
+                        FLEX <span class="text-xs text-cyan-400 border border-cyan-400/40 px-1.5 py-0.5 rounded ml-1">AI 3.0</span>
+                    </h1>
+                    <p class="text-[10px] text-slate-400 uppercase tracking-widest">Cyber Assistant OS</p>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <nav class="space-y-2">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn active w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition duration-200 bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 glow-cyan">
+                    <i class="fa-solid fa-gauge-high text-lg"></i> Dashboard
+                </button>
+                <button onclick="switchTab('chat')" id="nav-chat" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-400 hover:text-cyan-300 hover:bg-slate-800/50 transition duration-200 border border-transparent">
+                    <i class="fa-solid fa-robot text-lg"></i> AI Chatbot (Hinglish/Eng)
+                </button>
+                <button onclick="switchTab('tools')" id="nav-tools" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-400 hover:text-cyan-300 hover:bg-slate-800/50 transition duration-200 border border-transparent">
+                    <i class="fa-solid fa-square-poll-vertical text-lg"></i> Notes & Tasks
+                </button>
+                <button onclick="switchTab('calculator')" id="nav-calculator" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-400 hover:text-cyan-300 hover:bg-slate-800/50 transition duration-200 border border-transparent">
+                    <i class="fa-solid fa-calculator text-lg"></i> Cyber Calculator
+                </button>
+            </nav>
+        </div>
+
+        <!-- System Core Status Box -->
+        <div class="mt-6 p-4 rounded-xl glass-panel bg-slate-900/60 border border-cyan-500/20">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs text-slate-400 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> NLP Core
+                </span>
+                <span class="text-[10px] font-mono text-emerald-400 uppercase">ONLINE</span>
+            </div>
+            <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                <div class="bg-gradient-to-r from-cyan-400 to-purple-500 h-full w-[95%]"></div>
+            </div>
+            <div class="mt-2 text-[10px] text-slate-400 flex justify-between font-mono">
+                <span>Hinglish/Eng: Active</span>
+                <span>Voice: Ready</span>
+            </div>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-screen overflow-y-auto p-4 md:p-6 lg:p-8 space-y-6">
+
+        <!-- Top Header Bar -->
+        <header class="glass-panel p-4 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4 border-b border-cyber-border/40">
+            <!-- Search Bar -->
+            <div class="w-full md:w-1/2 relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400"></i>
+                <input type="text" id="global-search" onkeypress="handleSearchKey(event)" placeholder="Search Google or ask FLEX AI anything..." 
+                       class="w-full pl-11 pr-24 py-2.5 rounded-xl bg-slate-950/80 border border-slate-700/70 text-sm text-cyan-100 placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition">
+                <button onclick="executeSearch()" class="cyber-btn absolute right-1.5 top-1/2 -translate-y-1/2 bg-cyan-500 hover:bg-cyan-400 text-black px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition">
+                    Search
+                </button>
+            </div>
+
+            <!-- Date & Clock Header Display & Voice Toggles -->
+            <div class="flex items-center gap-6 self-end md:self-auto">
+                <div class="text-right">
+                    <div id="clock-display" class="orbitron text-xl font-bold text-cyan-400 tracking-wider">00:00:00 PM</div>
+                    <div id="date-display" class="text-xs text-slate-400 font-medium">Loading Date...</div>
+                </div>
+                <!-- Audio Speech Toggle -->
+                <button onclick="toggleAudioSpeech()" id="speech-toggle-btn" title="Toggle AI Audio Response" class="w-10 h-10 rounded-xl bg-slate-800 border border-cyan-500/30 flex items-center justify-center text-cyan-400 hover:bg-cyan-500 hover:text-black transition">
+                    <i class="fa-solid fa-volume-high text-sm"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- VIEW 1: DASHBOARD TAB -->
+        <section id="tab-dashboard" class="tab-content space-y-6">
+            
+            <!-- Hero Cyber AI Orb Banner -->
+            <div class="glass-panel p-6 md:p-8 rounded-3xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 border border-cyan-500/30">
+                <div class="z-10 space-y-3 max-w-xl text-center md:text-left">
+                    <span class="px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-cyan-300 text-xs font-mono uppercase tracking-widest">
+                        Neural Engine Online
+                    </span>
+                    <h2 class="orbitron text-2xl md:text-3xl font-extrabold text-white">
+                        WELCOME TO <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-500">FLEX AI 3.0</span>
+                    </h2>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        Aapke sabhi questions ke intelligent answers, Hinglish & English chat support, voice recognition aur workspace management ke sath!
+                    </p>
+                    <div class="pt-2 flex flex-wrap gap-3 justify-center md:justify-start">
+                        <button onclick="switchTab('chat')" class="cyber-btn px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-bold text-xs uppercase tracking-wider shadow-lg shadow-cyan-500/25 flex items-center gap-2">
+                            <i class="fa-solid fa-comments"></i> Start AI Chat
+                        </button>
+                        <button onclick="switchTab('tools')" class="cyber-btn px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 font-semibold text-xs border border-cyan-500/30 flex items-center gap-2">
+                            <i class="fa-solid fa-list-check"></i> Open Workspace
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Animated Sci-Fi AI Core Orb & Voice Wave -->
+                <div class="z-10 flex flex-col items-center gap-3">
+                    <div class="ai-orb-container">
+                        <div class="ai-ring"></div>
+                        <div class="ai-ring-2"></div>
+                        <div class="ai-orb"></div>
+                    </div>
+                    <!-- Audio Wave Indicator -->
+                    <div id="voice-visualizer" class="paused flex items-center gap-1 h-8 px-3 rounded-full bg-slate-900/80 border border-cyan-500/30">
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Web Launchers -->
+            <div class="space-y-3">
+                <h3 class="orbitron text-sm font-semibold text-slate-300 uppercase tracking-widest flex items-center gap-2">
+                    <i class="fa-solid fa-bolt text-cyan-400"></i> Fast Portal Launchers
+                </h3>
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                    <a href="https://www.youtube.com" target="_blank" class="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center gap-2 group hover:scale-105 transition duration-200 border-red-500/20 hover:border-red-500/50">
+                        <i class="fa-brands fa-youtube text-2xl text-red-500 group-hover:drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]"></i>
+                        <span class="text-xs font-medium text-slate-300">YouTube</span>
+                    </a>
+                    <a href="https://chatgpt.com" target="_blank" class="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center gap-2 group hover:scale-105 transition duration-200 border-emerald-500/20 hover:border-emerald-500/50">
+                        <i class="fa-solid fa-brain text-2xl text-emerald-400 group-hover:drop-shadow-[0_0_8px_rgba(52,211,153,0.8)]"></i>
+                        <span class="text-xs font-medium text-slate-300">ChatGPT</span>
+                    </a>
+                    <a href="https://github.com" target="_blank" class="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center gap-2 group hover:scale-105 transition duration-200 border-purple-500/20 hover:border-purple-500/50">
+                        <i class="fa-brands fa-github text-2xl text-purple-400 group-hover:drop-shadow-[0_0_8px_rgba(168,85,247,0.8)]"></i>
+                        <span class="text-xs font-medium text-slate-300">GitHub</span>
+                    </a>
+                    <a href="https://stackoverflow.com" target="_blank" class="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center gap-2 group hover:scale-105 transition duration-200 border-orange-500/20 hover:border-orange-500/50">
+                        <i class="fa-brands fa-stack-overflow text-2xl text-orange-400 group-hover:drop-shadow-[0_0_8px_rgba(251,146,60,0.8)]"></i>
+                        <span class="text-xs font-medium text-slate-300">StackOverflow</span>
+                    </a>
+                    <a href="https://codepen.io" target="_blank" class="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center gap-2 group hover:scale-105 transition duration-200 border-cyan-500/20 hover:border-cyan-500/50">
+                        <i class="fa-brands fa-codepen text-2xl text-cyan-400 group-hover:drop-shadow-[0_0_8px_rgba(0,240,255,0.8)]"></i>
+                        <span class="text-xs font-medium text-slate-300">CodePen</span>
+                    </a>
+                    <a href="https://www.w3schools.com" target="_blank" class="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center gap-2 group hover:scale-105 transition duration-200 border-green-500/20 hover:border-green-500/50">
+                        <i class="fa-solid fa-code text-2xl text-green-400 group-hover:drop-shadow-[0_0_8px_rgba(74,222,128,0.8)]"></i>
+                        <span class="text-xs font-medium text-slate-300">W3Schools</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Mini Dashboard Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Mini To-Do Overview -->
+                <div class="glass-panel p-5 rounded-2xl space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <h3 class="orbitron text-sm font-semibold text-cyan-400 flex items-center gap-2">
+                            <i class="fa-solid fa-check-double"></i> Active Tasks
+                        </h3>
+                        <button onclick="switchTab('tools')" class="text-xs text-purple-400 hover:text-purple-300">Manage All &rarr;</button>
+                    </div>
+                    <div id="dash-task-list" class="space-y-2 max-h-48 overflow-y-auto"></div>
+                </div>
+
+                <!-- Mini Notes Overview -->
+                <div class="glass-panel p-5 rounded-2xl space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <h3 class="orbitron text-sm font-semibold text-purple-400 flex items-center gap-2">
+                            <i class="fa-solid fa-pen-to-square"></i> Quick Scratchpad
+                        </h3>
+                        <span class="text-[10px] text-slate-500 uppercase font-mono">Auto-Saved</span>
+                    </div>
+                    <textarea id="dash-notes" oninput="saveNotes()" placeholder="Type quick ideas or code snippets..." 
+                              class="w-full h-32 p-3 rounded-xl bg-slate-950/70 border border-slate-800 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500 resize-none font-mono"></textarea>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 2: AI ASSISTANT CHATBOT TAB -->
+        <section id="tab-chat" class="tab-content hidden space-y-4 h-[calc(100vh-140px)] flex flex-col">
+            <div class="glass-panel flex-1 rounded-2xl p-4 md:p-6 flex flex-col justify-between overflow-hidden border border-cyan-500/30">
+                
+                <!-- Chat Header -->
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-cyan-400">
+                            <i class="fa-solid fa-robot"></i>
+                        </div>
+                        <div>
+                            <h3 class="orbitron text-sm font-bold text-cyan-300">FLEX AI Smart Assistant (Hinglish / English)</h3>
+                            <p class="text-[10px] text-slate-400">Kuch bhi pucho — coding, math, general questions ya school aura tips!</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="startVoiceInput()" id="mic-btn" title="Speak to AI" class="px-3 py-1.5 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-400/40 text-cyan-300 text-xs flex items-center gap-1.5 transition">
+                            <i class="fa-solid fa-microphone"></i> <span id="mic-status-text">Voice Mic</span>
+                        </button>
+                        <button onclick="clearChatHistory()" class="text-xs text-slate-500 hover:text-red-400 px-2.5 py-1.5 rounded border border-slate-800 hover:border-red-500/40 transition">
+                            <i class="fa-solid fa-trash-can mr-1"></i> Clear
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Chat Messages Scroll Area -->
+                <div id="chat-messages" class="flex-1 overflow-y-auto space-y-4 pr-2">
+                    <div class="flex gap-3 max-w-[85%]">
+                        <div class="w-8 h-8 rounded-full bg-cyan-500/20 border border-cyan-400/50 flex-shrink-0 flex items-center justify-center text-cyan-400 text-xs font-bold">
+                            AI
+                        </div>
+                        <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-cyan-500/20 text-xs text-slate-200 space-y-1">
+                            <p class="font-semibold text-cyan-400">FLEX AI System</p>
+                            <p>Hello! Main aapka **FLEX AI Assistant** hu. Aap mujhse English ya Hinglish me kuch bhi puch sakte hain — jaise calculations, web search, coding tips, ya school aura kaise banayein!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Prompt Shortcuts Bar -->
+                <div class="py-3 flex items-center gap-2 overflow-x-auto no-scrollbar">
+                    <button onclick="sendQuickPrompt('School me aura kaise banayein?')" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-cyan-500/30 text-cyan-300 text-xs flex-shrink-0 transition">
+                        🔥 Aura & Skills
+                    </button>
+                    <button onclick="sendQuickPrompt('Python me ek simple script kaise banayein?')" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-purple-500/30 text-purple-300 text-xs flex-shrink-0 transition">
+                        💻 Python Help
+                    </button>
+                    <button onclick="sendQuickPrompt('Calculate 450 * 15 + 1200')" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-pink-500/30 text-pink-300 text-xs flex-shrink-0 transition">
+                        🧮 Fast Math Solver
+                    </button>
+                    <button onclick="sendQuickPrompt('What is the current time and date?')" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-emerald-500/30 text-emerald-300 text-xs flex-shrink-0 transition">
+                        ⏰ Time & Date
+                    </button>
+                </div>
+
+                <!-- Chat Input Form -->
+                <div class="relative pt-2 border-t border-slate-800">
+                    <form onsubmit="handleChatSubmit(event)" class="flex gap-2">
+                        <input type="text" id="chat-input" placeholder="Yaha kuch bhi pucho (Hinglish / English)..." 
+                               class="flex-1 px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-700 text-xs text-cyan-100 placeholder-slate-500 focus:outline-none focus:border-cyan-400">
+                        <button type="submit" class="cyber-btn px-5 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-black font-bold text-xs uppercase tracking-wider shadow-lg shadow-cyan-500/20">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 3: NOTES & TASKS TAB -->
+        <section id="tab-tools" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Task Manager -->
+                <div class="glass-panel p-6 rounded-2xl space-y-4 border border-cyan-500/30">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <h3 class="orbitron text-base font-bold text-cyan-400 flex items-center gap-2">
+                            <i class="fa-solid fa-list-check"></i> Cyber Task Manager
+                        </h3>
+                        <span id="task-counter" class="text-xs px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-300 font-mono">0 Pending</span>
+                    </div>
+
+                    <form onsubmit="addTask(event)" class="flex gap-2">
+                        <input type="text" id="new-task-input" placeholder="Add new task or project step..." 
+                               class="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-400">
+                        <button type="submit" class="cyber-btn px-4 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-bold text-xs">
+                            + Add Task
+                        </button>
+                    </form>
+
+                    <div id="full-task-list" class="space-y-2 max-h-96 overflow-y-auto pr-1"></div>
+                </div>
+
+                <!-- Expanded Smart Notepad -->
+                <div class="glass-panel p-6 rounded-2xl space-y-4 border border-purple-500/30">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <h3 class="orbitron text-base font-bold text-purple-400 flex items-center gap-2">
+                            <i class="fa-solid fa-file-code"></i> AI Smart Notes
+                        </h3>
+                        <button onclick="downloadNotes()" class="text-xs text-cyan-400 hover:text-cyan-300 flex items-center gap-1">
+                            <i class="fa-solid fa-download"></i> Export Notes
+                        </button>
+                    </div>
+
+                    <textarea id="full-notes" oninput="saveNotes()" placeholder="Write detailed code snippets, homework notes, or project plans here... Auto-saved!" 
+                              class="w-full h-80 p-4 rounded-xl bg-slate-950/80 border border-slate-800 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500 font-mono leading-relaxed resize-none"></textarea>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 4: CALCULATOR TAB -->
+        <section id="tab-calculator" class="tab-content hidden flex justify-center py-6">
+            <div class="glass-panel p-6 rounded-3xl w-full max-w-sm space-y-4 border border-cyan-500/30 shadow-2xl">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                    <span class="orbitron text-xs font-bold text-cyan-400 tracking-wider">FX-999 CYBER CALCULATOR</span>
+                    <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                </div>
+
+                <div class="bg-slate-950/90 p-4 rounded-2xl border border-slate-800 text-right space-y-1">
+                    <div id="calc-expression" class="text-xs text-slate-500 h-4 font-mono overflow-x-auto"></div>
+                    <div id="calc-display" class="orbitron text-2xl font-bold text-cyan-300 tracking-wider overflow-x-auto">0</div>
+                </div>
+
+                <div class="grid grid-cols-4 gap-2.5">
+                    <button onclick="calcClear()" class="p-3 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-400 text-xs font-bold border border-red-500/30">AC</button>
+                    <button onclick="calcDelete()" class="p-3 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 text-xs font-bold border border-amber-500/30">DEL</button>
+                    <button onclick="calcInput('%')" class="p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-400 text-xs font-bold">%</button>
+                    <button onclick="calcInput('/')" class="p-3 rounded-xl bg-purple-500/20 hover:bg-purple-500/40 text-purple-300 text-xs font-bold border border-purple-500/30">÷</button>
+
+                    <button onclick="calcInput('7')" class="p-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 text-sm font-semibold">7</button>
+                    <button onclick="calcInput('8')" class="p-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 text-sm font-semibold">8</button>
+                    <button onclick="calcInput('9')" class="p-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 text-sm font-semibold">9</button>
+                    <button onclick="calcInput('*')" class="p-3 rounded-xl bg-purple-500/20 hover:bg-purple-500/40 text-purple-300 text-xs font-bold border border-purple-500/30">×</button>
+
+                    <button onclick="calcInput('4')" class="p-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 text-sm font-semibold">4</button>
+                    <button onclick="calcInput('5')" class="p-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 text-sm font-semibold">5</button>
+                    <button onclick="calcInput('6')" class="p-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 text-sm font-semibold">6</button>
+                    <button onclick="calcInput('-')" class="p-3 rounded-xl bg-purple-500/20 hover:bg-purple-500/40 text-purple-300 text-xs font-bold border border-purple-500/30">-</button>
+
+                    <button onclick="calcInput('1')" class="p-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 text-sm font-semibold">1</button>
+                    <button onclick="calcInput('2')" class="p-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 text-sm font-semibold">2</button>
+                    <button onclick="calcInput('3')" class="p-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 text-sm font-semibold">3</button>
+                    <button onclick="calcInput('+')" class="p-3 rounded-xl bg-purple-500/20 hover:bg-purple-500/40 text-purple-300 text-xs font-bold border border-purple-500/30">+</button>
+
+                    <button onclick="calcInput('0')" class="col-span-2 p-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 text-sm font-semibold">0</button>
+                    <button onclick="calcInput('.')" class="p-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 text-sm font-semibold">.</button>
+                    <button onclick="calcEvaluate()" class="p-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black text-xs font-bold shadow-lg shadow-cyan-500/30">=</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        let state = {
+            speechEnabled: true,
+            tasks: JSON.parse(localStorage.getItem('flex_tasks')) || [
+                { id: 1, text: "Build advanced FLEX AI web app", completed: true },
+                { id: 2, text: "Master JavaScript & Python coding", completed: false },
+                { id: 3, text: "Build genuine school aura with coding projects", completed: false }
+            ],
+            notes: localStorage.getItem('flex_notes') || "FLEX AI Workspace Notes:\n- Use AI chat for queries in English or Hinglish.\n- Voice recognition is fully supported."
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            startClock();
+            renderTasks();
+            syncNotesUI();
+        });
+
+        // Clock & Date Logic
+        function startClock() {
+            function update() {
+                const now = new Date();
+                document.getElementById('clock-display').innerText = now.toLocaleTimeString();
+                document.getElementById('date-display').innerText = now.toLocaleDateString('en-US', {
+                    weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
+                });
+            }
+            update();
+            setInterval(update, 1000);
+        }
+
+        // Tab Navigation
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-cyan-500/10', 'text-cyan-400', 'border-cyan-500/30', 'glow-cyan');
+                btn.classList.add('text-slate-400', 'border-transparent');
+            });
+
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+            const activeNav = document.getElementById(`nav-${tabName}`);
+            activeNav.classList.add('bg-cyan-500/10', 'text-cyan-400', 'border-cyan-500/30', 'glow-cyan');
+            activeNav.classList.remove('text-slate-400', 'border-transparent');
+        }
+
+        // Global Search
+        function handleSearchKey(event) {
+            if (event.key === 'Enter') executeSearch();
+        }
+
+        function executeSearch() {
+            const query = document.getElementById('global-search').value.trim();
+            if (query) {
+                window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
+            }
+        }
+
+        // To-Do List Engine
+        function renderTasks() {
+            const dashList = document.getElementById('dash-task-list');
+            const fullList = document.getElementById('full-task-list');
+            const counter = document.getElementById('task-counter');
+
+            const pending = state.tasks.filter(t => !t.completed).length;
+            if (counter) counter.innerText = `${pending} Pending`;
+
+            const html = state.tasks.map(task => `
+                <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition">
+                    <div class="flex items-center gap-3 overflow-hidden">
+                        <input type="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTask(${task.id})" 
+                               class="w-4 h-4 rounded accent-cyan-400 cursor-pointer">
+                        <span class="text-xs ${task.completed ? 'line-through text-slate-500' : 'text-slate-200'} truncate font-medium">
+                            ${escapeHtml(task.text)}
+                        </span>
+                    </div>
+                    <button onclick="deleteTask(${task.id})" class="text-slate-500 hover:text-red-400 text-xs px-2 py-1">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            `).join('');
+
+            if (dashList) dashList.innerHTML = html || '<p class="text-xs text-slate-500 italic">No tasks active.</p>';
+            if (fullList) fullList.innerHTML = html || '<p class="text-xs text-slate-500 italic">No tasks found. Add one above!</p>';
+
+            localStorage.setItem('flex_tasks', JSON.stringify(state.tasks));
+        }
+
+        function addTask(e) {
+            e.preventDefault();
+            const input = document.getElementById('new-task-input');
+            const text = input.value.trim();
+            if (text) {
+                state.tasks.unshift({ id: Date.now(), text: text, completed: false });
+                input.value = '';
+                renderTasks();
+            }
+        }
+
+        function toggleTask(id) {
+            state.tasks = state.tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t);
+            renderTasks();
+        }
+
+        function deleteTask(id) {
+            state.tasks = state.tasks.filter(t => t.id !== id);
+            renderTasks();
+        }
+
+        // Smart Notes
+        function syncNotesUI() {
+            const dn = document.getElementById('dash-notes');
+            const fn = document.getElementById('full-notes');
+            if (dn) dn.value = state.notes;
+            if (fn) fn.value = state.notes;
+        }
+
+        function saveNotes() {
+            const activeElement = document.activeElement;
+            const val = activeElement.value;
+            state.notes = val;
+            localStorage.setItem('flex_notes', val);
+
+            const dn = document.getElementById('dash-notes');
+            const fn = document.getElementById('full-notes');
+            if (activeElement.id === 'dash-notes' && fn) fn.value = val;
+            else if (activeElement.id === 'full-notes' && dn) dn.value = val;
+        }
+
+        function downloadNotes() {
+            const blob = new Blob([state.notes], { type: 'text/plain' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'FLEX_AI_Workspace_Notes.txt';
+            a.click();
+        }
+
+        // Voice Input Recognition (SpeechRecognition)
+        function startVoiceInput() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert("Speech recognition is not supported in this browser. Please use Chrome or Edge.");
+                return;
+            }
+
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'en-IN'; // Supports Indian English & Hinglish accent
+            const micText = document.getElementById('mic-status-text');
+            
+            micText.innerText = "Listening...";
+            document.getElementById('mic-btn').classList.add('bg-cyan-500/40', 'glow-cyan');
+
+            recognition.onresult = function(event) {
+                const speechResult = event.results[0][0].transcript;
+                document.getElementById('chat-input').value = speechResult;
+                micText.innerText = "Voice Mic";
+                document.getElementById('mic-btn').classList.remove('bg-cyan-500/40', 'glow-cyan');
+                handleChatSubmit(new Event('submit'));
+            };
+
+            recognition.onerror = function() {
+                micText.innerText = "Voice Mic";
+                document.getElementById('mic-btn').classList.remove('bg-cyan-500/40', 'glow-cyan');
+            };
+
+            recognition.onend = function() {
+                micText.innerText = "Voice Mic";
+                document.getElementById('mic-btn').classList.remove('bg-cyan-500/40', 'glow-cyan');
+            };
+
+            recognition.start();
+        }
+
+        // Audio Voice Output (SpeechSynthesis)
+        function toggleAudioSpeech() {
+            state.speechEnabled = !state.speechEnabled;
+            const btn = document.getElementById('speech-toggle-btn');
+            if (state.speechEnabled) {
+                btn.classList.add('text-cyan-400');
+                btn.classList.remove('text-slate-600');
+                speakText("Audio voice enabled.");
+            } else {
+                btn.classList.remove('text-cyan-400');
+                btn.classList.add('text-slate-600');
+                if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            }
+        }
+
+        function speakText(text) {
+            if (!state.speechEnabled || !('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+
+            const visualizer = document.getElementById('voice-visualizer');
+            const cleanText = text.replace(/[*_#`]/g, '');
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            utterance.rate = 1.0;
+            utterance.pitch = 1.0;
+
+            if (visualizer) {
+                utterance.onstart = () => visualizer.classList.remove('paused');
+                utterance.onend = () => visualizer.classList.add('paused');
+                utterance.onerror = () => visualizer.classList.add('paused');
+            }
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Chatbot Form & NLP Engine
+        function sendQuickPrompt(prompt) {
+            switchTab('chat');
+            document.getElementById('chat-input').value = prompt;
+            handleChatSubmit(new Event('submit'));
+        }
+
+        function handleChatSubmit(e) {
+            e.preventDefault();
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+
+            appendMessage('user', message);
+            input.value = '';
+
+            setTimeout(() => {
+                const response = generateSmartNLPResponse(message);
+                appendMessage('ai', response);
+                speakText(response);
+            }, 600);
+        }
+
+        function appendMessage(sender, text) {
+            const container = document.getElementById('chat-messages');
+            const isUser = sender === 'user';
+
+            const msgHtml = `
+                <div class="flex gap-3 max-w-[85%] ${isUser ? 'ml-auto flex-row-reverse' : ''}">
+                    <div class="w-8 h-8 rounded-full ${isUser ? 'bg-purple-500/20 border border-purple-400/50 text-purple-300' : 'bg-cyan-500/20 border border-cyan-400/50 text-cyan-400'} flex-shrink-0 flex items-center justify-center text-xs font-bold">
+                        ${isUser ? 'YOU' : 'AI'}
+                    </div>
+                    <div class="p-3.5 rounded-2xl ${isUser ? 'bg-purple-900/40 border border-purple-500/30 text-purple-100' : 'bg-slate-900/90 border border-cyan-500/20 text-slate-200'} text-xs leading-relaxed space-y-1">
+                        <p class="font-semibold ${isUser ? 'text-purple-300' : 'text-cyan-400'}">${isUser ? 'You' : 'FLEX AI 3.0'}</p>
+                        <p>${formatMessageText(text)}</p>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML += msgHtml;
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function formatMessageText(text) {
+            return escapeHtml(text).replace(/\n/g, '<br>');
+        }
+
+        // Advanced Smart Hinglish & English NLP Fallback Responder
+        function generateSmartNLPResponse(msg) {
+            const lower = msg.toLowerCase();
+
+            // 1. Greetings (Hinglish & English)
+            if (lower.includes('hello') || lower.includes('hi') || lower.includes('hey') || lower.includes('namaste') || lower.includes('kaise ho')) {
+                return "Namaste! Main FLEX AI hu. Bataiye aaj mai aapki kya sahayta karu? Aap mujhse coding, math, ya koi bhi sawal puch sakte hain.";
+            }
+
+            // 2. School Aura & Skills
+            if (lower.includes('aura') || lower.includes('school') || lower.includes('respect')) {
+                return "School me asal aura kisi shortcut ya CCTV tricks se nahi, balki coding skills, projects, academics aur sports me excellence se banta hai! Jab aap khud ki banayi hui apps ya projects dikhate hain, toh sabhi respect karte hain.";
+            }
+
+            // 3. Time & Date
+            if (lower.includes('time') || lower.includes('date') || lower.includes('kya time') || lower.includes('aaj kya date')) {
+                const now = new Date();
+                return `Abhi current time ${now.toLocaleTimeString()} hai aur date ${now.toLocaleDateString()} hai.`;
+            }
+
+            // 4. Math calculation check
+            if (lower.includes('calculate') || lower.includes('solve') || /[\d][+\-*/%\d]/.test(lower)) {
+                try {
+                    const expr = msg.replace(/[^0-9+\-*/().]/g, '');
+                    if (expr) {
+                        const res = eval(expr);
+                        return `Calculation Result: **${expr} = ${res}** ✅`;
+                    }
+                } catch (err) {
+                    // ignore and move to next
+                }
+            }
+
+            // 5. Python / Coding
+            if (lower.includes('python') || lower.includes('code') || lower.includes('script')) {
+                return "Python me automate karne ke liye aap `pyttsx3`, `requests`, ya `speech_recognition` libraries use kar sakte hain. Koi specific code chahiye toh batayein!";
+            }
+
+            // 6. Dynamic Intelligent Fallback Engine for Any Custom Question (Hinglish & English)
+            if (lower.includes('kya') || lower.includes('kaise') || lower.includes('why') || lower.includes('what') || lower.includes('how') || lower.includes('batao')) {
+                return `Aapne pucha: "${msg}". Yeh ek behtareen sawal hai! Iska exact answer ye hai ki technology aur programming ki duniya me har problem ka solution logic aur clean code se nikalta hai. Aap chahen toh isko Google par bhi search kar sakte hain!`;
+            }
+
+            return `Maine aapka message samajh liya: "${msg}". Main ek smart AI assistant hu jo aapke sabhi tasks aur queries me help karne ke liye taiyar hu. Aap aur kya janna chahte hain?`;
+        }
+
+        function clearChatHistory() {
+            document.getElementById('chat-messages').innerHTML = '';
+        }
+
+        // Scientific Calculator Functions
+        let calcExpr = '';
+
+        function calcInput(char) {
+            calcExpr += char;
+            document.getElementById('calc-display').innerText = calcExpr;
+        }
+
+        function calcClear() {
+            calcExpr = '';
+            document.getElementById('calc-display').innerText = '0';
+            document.getElementById('calc-expression').innerText = '';
+        }
+
+        function calcDelete() {
+            calcExpr = calcExpr.slice(0, -1);
+            document.getElementById('calc-display').innerText = calcExpr || '0';
+        }
+
+        function calcEvaluate() {
+            try {
+                document.getElementById('calc-expression').innerText = calcExpr + ' =';
+                const result = eval(calcExpr);
+                document.getElementById('calc-display').innerText = result;
+                calcExpr = result.toString();
+            } catch {
+                document.getElementById('calc-display').innerText = 'ERROR';
+                calcExpr = '';
+            }
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/[&<>"']/g, function(m) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+            });
+        }
+    </script>
+</body>
+</html>
